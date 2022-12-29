@@ -15,4 +15,4 @@ export default class LoseScene extends Phaser.Scene{
         restart.on('pointerdown',()=>{this.scene.start('menu')});
 
     }
-}
+} 

@@ -1,6 +1,6 @@
 export default class Player extends Phaser.GameObjects.Container{
 
-	constructor(scene,x,y){
+	constructor(scene,x,y,num){
 		super(scene,x,y);
 		this.sprite= new Phaser.GameObjects.Sprite(scene,0,0,'player');
 		this.setSize(this.sprite.width, this.sprite.height);
@@ -8,7 +8,7 @@ export default class Player extends Phaser.GameObjects.Container{
 
 		this.sprite.setDepth(10);
 		this.speed=100;
-		this.maxLife=3;
+		this.maxLife=num;
 		this.currentLife=this.maxLife;
 		this.lifes=this.scene.add.text(225,25,this.currentLife+'/'+this.maxLife
 		, {fontFamily: 'Pixeled', fontSize: 10, color: '#FFFFFF'})

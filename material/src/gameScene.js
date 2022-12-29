@@ -26,14 +26,14 @@ export default class GameScene extends Phaser.Scene {
 
 
 		//FONDO
-		var bg= this.add.image(0,0,'bg').setOrigin(0,0);
+		this.bg= this.add.image(0,0,'bg').setOrigin(0,0);
 
 		//CAMARA
-		this.cameras.main.setBounds(0, 0, bg.displayWidth, bg.displayHeight);
+		this.cameras.main.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
 		//MINI_MAPA
 		var camaraMapa= this.cameras.add(25,7,60,50);
 		camaraMapa.zoom=0.25;
-		camaraMapa.setBounds(0, 0, bg.displayWidth, bg.displayHeight);
+		camaraMapa.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
 		
 
 		// MAPA
@@ -60,8 +60,21 @@ export default class GameScene extends Phaser.Scene {
 		const width = this.scale.width;
 		const height = this.scale.height;
 		
-		this.player = new Player(this, width/ 2, 100);
+		this.player = new Player(this, width/ 2, 100, this.max);
 
+
+		let bLeft = new Bound(this, -1, 0,1,bg.displayHeight);
+		let bRight = new Bound(this, bg.displayWidth, 0,1,bg.displayHeight);
+		let bUp = new Bound(this, 0, -1,bg.displayWidth,1);
+		let bDown = new Bound(this, 0, bg.displayHeight ,bg.displayWidth,1);
+
+        // colisiones con los bordes
+		this.physics.add.collider(this.player, this.bg);
+		this.physics.add.collider(this.player, bLeft);
+		this.physics.add.collider(this.player, bDown);
+		this.physics.add.collider(this.player, bRight);
+		this.physics.add.collider(this.player, bUp);
+		this.player.body.onCollide = true;
 		//CAMRA FOLLOW
 		camaraMapa.startFollow(this.player);
 		this.cameras.main.startFollow(this.player);
