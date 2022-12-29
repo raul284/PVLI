@@ -18,9 +18,24 @@ export default class GameScene extends Phaser.Scene {
 		this.load.image('fuel', 'assets/sprites/fuel.png');
 		this.load.spritesheet('asteroid','assets/sprites/meteor.png',
 		 {frameWidth: 16, frameHeight: 14});
+
+		 this.load.image('bg', 'assets/sprites/plazaNoche.png');
 	}
 	
 	create(){
+
+
+		//FONDO
+		var bg= this.add.image(0,0,'bg').setOrigin(0,0);
+
+		//CAMARA
+		this.cameras.main.setBounds(0, 0, bg.displayWidth, bg.displayHeight);
+		//MINI_MAPA
+		var camaraMapa= this.cameras.add(25,7,60,50);
+		camaraMapa.zoom=0.25;
+		camaraMapa.setBounds(0, 0, bg.displayWidth, bg.displayHeight);
+		
+
 		// MAPA
 		this.map = this.make.tilemap({ 
 			key: 'tilsetJSON', 
@@ -46,6 +61,11 @@ export default class GameScene extends Phaser.Scene {
 		const height = this.scale.height;
 		
 		this.player = new Player(this, width/ 2, 100);
+
+		//CAMRA FOLLOW
+		camaraMapa.startFollow(this.player);
+		this.cameras.main.startFollow(this.player);
+
 
 		this.numAster=0;
 		this.astSpeed=50;
