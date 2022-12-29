@@ -6,7 +6,7 @@
 
     create(){
         this.add.text(this.game.config.width/2 ,this.game.config.height/5 , 'TERRANEITOR',
-        {fontFamily:"Pixeled", fontSize:25, color:'#FFFFFF'}).setOrigin(0.5,0.5).setAlign('center');
+        {fontFamily:"Pixeled", fontSize:25, color:'#0000FF'}).setOrigin(0.5,0.5).setAlign('center');
 
         this.createButton(this.game.config.height/5*2,'Javo',1);
         this.createButton(this.game.config.height/5*3,'la',2);

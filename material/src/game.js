@@ -1,6 +1,7 @@
 import MenuScene from "./menu.js";
 import GameScene from "./gameScene.js";
 import LoseScene from "./lose.js";
+
 window.onload = ()=>{
 
     const config = {
@@ -15,7 +16,7 @@ window.onload = ()=>{
             default: 'arcade',
 			arcade: {
 				gravity: {y: 150}, 
-				debug: true
+				debug: false
 			}
         },
         pixelArt: true,

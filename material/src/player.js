@@ -1,3 +1,4 @@
+import Ateroid from "./asteroids.js";
 export default class Player extends Phaser.GameObjects.Container{
 
 	constructor(scene,x,y,num){
@@ -8,10 +9,18 @@ export default class Player extends Phaser.GameObjects.Container{
 
 		this.sprite.setDepth(10);
 		this.speed=100;
+
+		this.maxBullet=3;
+		this.bullet=this.maxBullet;
+		this.dir=1;
+		this.bullets=this.scene.add.text(225,150,'BULLET \n    '+this.bullet+'/'+this.maxBullet
+		, {fontFamily: 'Pixeled', fontSize: 10, color: '#AAAAAA'})
+		.setOrigin(0.5,0.5).setScrollFactor(0);
+
 		this.maxLife=num;
 		this.currentLife=this.maxLife;
-		this.lifes=this.scene.add.text(225,25,this.currentLife+'/'+this.maxLife
-		, {fontFamily: 'Pixeled', fontSize: 10, color: '#FFFFFF'})
+		this.lifes=this.scene.add.text(225,25,'LIFES \n   '+this.currentLife+'/'+this.maxLife
+		, {fontFamily: 'Pixeled', fontSize: 10, color: '#F00000'})
 		.setOrigin(0.5,0.5).setScrollFactor(0);
 		
 		this.scene.add.existing(this);
@@ -31,6 +40,7 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.cursorSpace= this.scene.input.keyboard.addKey('SPACE');
 		this.cursorL= this.scene.input.keyboard.addKey('L');
 		this.cursorH= this.scene.input.keyboard.addKey('H');
+		this.cursorP= this.scene.input.keyboard.addKey('P');
 
 
 
@@ -40,11 +50,13 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.sprite.preUpdate(t,dt);
 		if(this.cursorA.isDown)
 		{
+			this.dir=-1;
 			this.sprite.setFlip(true,false);
 			this.body.setVelocityX(-this.speed);
 		}
 		else if(this.cursorD.isDown)
 		{
+			this.dir=1;
 			this.sprite.setFlip(false,false);
 			this.body.setVelocityX(this.speed);
 		}
@@ -63,8 +75,30 @@ export default class Player extends Phaser.GameObjects.Container{
 	  if (Phaser.Input.Keyboard.JustDown(this.cursorH))
 	  {
 		this.currentLife--;
-		this.lifes.text= this.currentLife+'/'+this.maxLife;
+		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
 	  }
+
+	  if (Phaser.Input.Keyboard.JustDown(this.cursorP) && this.bullet>0)
+	  {
+	
+		new Ateroid(this.scene,this.x,this.y,this,this.dir);
+		this.bullet--;
+		this.bullets.text='BULLET \n    '+this.bullet+'/'+this.maxBullet;
+	  }
+	}
+
+	health()
+	{
+		if(this.currentLife<this.maxLife)this.currentLife++;
+		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
+	 		
+	}
+	hit()
+	{
+		this.currentLife--;
+		if(this.currentLife==0)this.scene.scene.start('gameOver');
+		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
+	 	
 	}
 
 

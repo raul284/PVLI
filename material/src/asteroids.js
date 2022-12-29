@@ -1,0 +1,54 @@
+export default class Ateroid extends Phaser.GameObjects.Container{
+    
+    constructor(scene,x,y,player,dir)
+    {
+        super(scene,x,y);
+       this.astorid= new Phaser.GameObjects.Sprite(scene,0,0,'asteroid');
+        this.setSize(this.astorid.width,this.astorid.height);
+        this.add(this.astorid);
+
+        this.astorid.setDepth(10);
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+
+        this.body.allowGravity=false
+      //this.dead= false;
+        this.player=player;
+        this.body.setVelocityX(dir*100);
+        if(dir===-1)this.astorid.setFlip(true,false)
+
+        this.scene.anims.create({
+			key:'bum',
+			frames: this.scene.anims.generateFrameNumbers('asteroid',{start:0, end:3}),
+			frameRate:7,
+			repeat:1
+		});  
+
+        // this.on('animationcomplete', end =>{ //evento que se ejecuta cuando una animación ha terminado
+		// 	console.log("fa")
+        //     this.die();			
+		// }); 
+        
+        this.scene.physics.add.overlap(this.scene.ship, this, ()=>{this.scene.ship.hit(),this.die()});
+		
+    }
+   
+    preUpdate(t,dt)
+    {
+        this.astorid.preUpdate(t,dt);
+        if( this.x>this.scene.bg.width || this.x<0)
+        {
+         console.log("si")
+         //this.dead=true;
+         this.die();
+         //this.astorid.play('bum');
+        }
+    }
+
+    die()
+    {
+        this.player.bullet++;
+        this.player.bullets.text='BULLET \n    '+ this.player.bullet+'/'+ this.player.maxBullet;
+        this.destroy();
+    }
+}

@@ -1,4 +1,8 @@
 import Player from './player.js';
+import Bound from './bound.js';
+import Ship from './ship.js';
+import Bonus from './bonus.js';
+import Enemy from './enemy.js';
 
 export default class GameScene extends Phaser.Scene {
 
@@ -20,10 +24,12 @@ export default class GameScene extends Phaser.Scene {
 		 {frameWidth: 16, frameHeight: 14});
 
 		 this.load.image('bg', 'assets/sprites/plazaNoche.png');
+		 this.load.image('pixel', 'assets/sprites/pixel1x1.png');
+		 this.load.image('bob', 'assets/sprites/bob.png');
+		 this.load.image('patrik', 'assets/sprites/patrik.png');
 	}
 	
 	create(){
-
 
 		//FONDO
 		this.bg= this.add.image(0,0,'bg').setOrigin(0,0);
@@ -31,18 +37,18 @@ export default class GameScene extends Phaser.Scene {
 		//CAMARA
 		this.cameras.main.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
 		//MINI_MAPA
-		var camaraMapa= this.cameras.add(25,7,60,50);
-		camaraMapa.zoom=0.25;
-		camaraMapa.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
+		this.camaraMapa= this.cameras.add(25,7,45,45);
+		this.camaraMapa.zoom=0.15;
+		this.camaraMapa.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
 		
-
-		// MAPA
+		console.log(this.camaraMapa.y)
+		
+		//MAPA
 		this.map = this.make.tilemap({ 
 			key: 'tilsetJSON', 
 			tileWidth: 8, 
 			tileHeight: 8 
-		});
-		
+		});		
 		
 		this.anims.create({
 			key: 'astd',
@@ -56,17 +62,18 @@ export default class GameScene extends Phaser.Scene {
 		
 		// Colisiones
 		this.groundLayer.setCollisionBetween(0,999);
-		
+	
 		const width = this.scale.width;
 		const height = this.scale.height;
 		
 		this.player = new Player(this, width/ 2, 100, this.max);
 
+		this.ship = new Ship(this,65,160,this.max);
 
-		let bLeft = new Bound(this, -1, 0,1,bg.displayHeight);
-		let bRight = new Bound(this, bg.displayWidth, 0,1,bg.displayHeight);
-		let bUp = new Bound(this, 0, -1,bg.displayWidth,1);
-		let bDown = new Bound(this, 0, bg.displayHeight ,bg.displayWidth,1);
+		let bLeft = new Bound(this, -1, 0,1,this.bg.displayHeight);
+		let bRight = new Bound(this, this.bg.displayWidth, 0,1,this.bg.displayHeight);
+		let bUp = new Bound(this, 0, -1,this.bg.displayWidth,1);
+		let bDown = new Bound(this, 0, this.bg.displayHeight ,this.bg.displayWidth,1);
 
         // colisiones con los bordes
 		this.physics.add.collider(this.player, this.bg);
@@ -76,7 +83,7 @@ export default class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.player, bUp);
 		this.player.body.onCollide = true;
 		//CAMRA FOLLOW
-		camaraMapa.startFollow(this.player);
+		this.camaraMapa.startFollow(this.player);
 		this.cameras.main.startFollow(this.player);
 
 
@@ -85,9 +92,22 @@ export default class GameScene extends Phaser.Scene {
 		//new Fuel(this);
 		// Colision entre player y los tiles
 		this.physics.add.collider(this.player, this.groundLayer);
+		this.physics.add.collider(this.ship, this.groundLayer);
+
+		this.bonus=[];
+		this.time.addEvent({delay:3000, callback: ()=>{this.spawnBonus()},callbackScope:this, loop:true});
+		
+		this.time.addEvent({delay:5000, callback: ()=>{this.spawnEnemy()},callbackScope:this, loop:true});
 		
 	}
-	
+	spawnBonus(){
+		this.bonus.push(new Bonus(this));
+		
+	}
+	spawnEnemy(){
+		this.bonus.push(new Enemy(this));
+		
+	}
 	
 	
 }

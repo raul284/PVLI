@@ -10,7 +10,7 @@ export default class LoseScene extends Phaser.Scene{
         {fontFamily:'Pixeled', fontSize:20, color:'#FFFFFF'}).setOrigin(0.5,0.5).setAlign('center');
 
         let restart=this.add.text(this.game.config.width/2 , this.game.config.height/2*1.5,'Pa  atrás',
-        {fontFamily:'Pixeled', fontSize:15, color:'#FFFFFF'}).setOrigin(0.5,0.5).setAlign('center').setInteractive();
+        {fontFamily:'Pixeled', fontSize:15, color:'#F00000'}).setOrigin(0.5,0.5).setAlign('center').setInteractive();
 
         restart.on('pointerdown',()=>{this.scene.start('menu')});
 
