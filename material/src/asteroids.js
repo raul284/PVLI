@@ -35,6 +35,9 @@ export default class Ateroid extends Phaser.GameObjects.Container{
         {
             this.scene.physics.add.overlap(this.scene.enemy[i], this, ()=>{this.scene.enemy[i].die(),this.die()});
         }
+
+
+        this.bum= this.scene.sound.add('explosion');
     }
    
     preUpdate(t,dt)
@@ -51,6 +54,8 @@ export default class Ateroid extends Phaser.GameObjects.Container{
 
     die()
     {
+        //SONIDO
+        this.bum.play();
         this.player.bullet++;
         this.player.bullets.text='BULLET \n    '+ this.player.bullet+'/'+ this.player.maxBullet;
         this.destroy();

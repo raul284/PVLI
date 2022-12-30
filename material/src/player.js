@@ -43,6 +43,11 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.cursorL= this.scene.input.keyboard.addKey('L');
 		this.cursorH= this.scene.input.keyboard.addKey('H');
 		this.cursorP= this.scene.input.keyboard.addKey('P');
+		//Raton
+		this.pointer=this.scene.input.activePointer
+
+		this.shot=true;
+	
 	}
 
 	preUpdate(t,dt){
@@ -65,19 +70,22 @@ export default class Player extends Phaser.GameObjects.Container{
 		{
 			this.body.setVelocityY(-this.speed);
 		}
-		
-	    if (Phaser.Input.Keyboard.JustDown(this.cursorP) && this.bullet>0)
+	
+	    if ((this.pointer.isDown||Phaser.Input.Keyboard.JustDown(this.cursorP)) && this.bullet>0 &&!this.shot)
 	    {	
+			this.shot=true;
 			new Ateroid(this.scene,this.x,this.y,this,this.dir,this.tam);
 			this.bullet--;
 			this.bullets.text='BULLET \n    '+this.bullet+'/'+this.maxBullet;
-	    }
+			
+		}
+		if (!this.pointer.isDown)this.shot=false;
+	   
 		if(this.blourActive){
 			console.log("SII");
 			this.scene.time.addEvent({delay:7000, callback: ()=>{
 			this.blour.destroy();this.blourActive=false},callbackScope:this, loop:false});
 		}
-	}
 		// if(this.cursorL.isDown || this.currentLife==0)
 		// {
 		// 	this.scene.scene.start('gameOver');
@@ -87,6 +95,7 @@ export default class Player extends Phaser.GameObjects.Container{
 		// 	this.currentLife--;
 		// 	this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
 		// }
+	}
 
 	health()
 	{

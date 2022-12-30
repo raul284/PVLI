@@ -2,8 +2,7 @@ export default class LoseScene extends Phaser.Scene{
 
     constructor(){
         super({key:'gameOver'});
-    }
-
+    }  
     create()
     {
         this.add.text(this.game.config.width/2 , this.game.config.height/2.5,'JAJAJA QUE TONTO',
@@ -14,5 +13,8 @@ export default class LoseScene extends Phaser.Scene{
 
         restart.on('pointerdown',()=>{this.scene.start('menu')});
 
+        this.lose= this.sound.add('endGame');
+        this.lose.play();
     }
+
 } 
