@@ -9,10 +9,12 @@ export default class Player extends Phaser.GameObjects.Container{
 
 		this.sprite.setDepth(10);
 		this.speed=100;
+		this.tam=1;
 
 		this.maxBullet=3;
 		this.bullet=this.maxBullet;
 		this.dir=1;
+		this.blourActive=false;
 		this.bullets=this.scene.add.text(225,150,'BULLET \n    '+this.bullet+'/'+this.maxBullet
 		, {fontFamily: 'Pixeled', fontSize: 10, color: '#AAAAAA'})
 		.setOrigin(0.5,0.5).setScrollFactor(0);
@@ -41,9 +43,6 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.cursorL= this.scene.input.keyboard.addKey('L');
 		this.cursorH= this.scene.input.keyboard.addKey('H');
 		this.cursorP= this.scene.input.keyboard.addKey('P');
-
-
-
 	}
 
 	preUpdate(t,dt){
@@ -66,41 +65,58 @@ export default class Player extends Phaser.GameObjects.Container{
 		{
 			this.body.setVelocityY(-this.speed);
 		}
-
-		if(this.cursorL.isDown || this.currentLife==0)
-		{
-			this.scene.scene.start('gameOver');
-			//this.scene.scene.end('GameScene');
+		
+	    if (Phaser.Input.Keyboard.JustDown(this.cursorP) && this.bullet>0)
+	    {	
+			new Ateroid(this.scene,this.x,this.y,this,this.dir,this.tam);
+			this.bullet--;
+			this.bullets.text='BULLET \n    '+this.bullet+'/'+this.maxBullet;
+	    }
+		if(this.blourActive){
+			console.log("SII");
+			this.scene.time.addEvent({delay:7000, callback: ()=>{
+			this.blour.destroy();this.blourActive=false},callbackScope:this, loop:false});
 		}
-	  if (Phaser.Input.Keyboard.JustDown(this.cursorH))
-	  {
-		this.currentLife--;
-		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
-	  }
-
-	  if (Phaser.Input.Keyboard.JustDown(this.cursorP) && this.bullet>0)
-	  {
-	
-		new Ateroid(this.scene,this.x,this.y,this,this.dir);
-		this.bullet--;
-		this.bullets.text='BULLET \n    '+this.bullet+'/'+this.maxBullet;
-	  }
 	}
+		// if(this.cursorL.isDown || this.currentLife==0)
+		// {
+		// 	this.scene.scene.start('gameOver');
+		// }
+		// if (Phaser.Input.Keyboard.JustDown(this.cursorH))
+		// {
+		// 	this.currentLife--;
+		// 	this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
+		// }
 
 	health()
 	{
 		if(this.currentLife<this.maxLife)this.currentLife++;
-		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
-	 		
+		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;	 		
 	}
 	hit()
 	{
 		this.currentLife--;
 		if(this.currentLife==0)this.scene.scene.start('gameOver');
 		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
-	 	
+
+		this.speed=100;
+		this.tam=1;
+		if(this.blourActive){
+			this.blour.destroy();
+			this.blourActive=false;
+		}	 	
 	}
-
-
-
+	powerUp(power)
+	{
+		if(power=='bob') this.health();
+		else if(power=='duck')this.speed=150;
+		else if(power=='eve'){this.tam=2;}
+		else if(power=='raw'&& !this.blourActive){
+			this.blour=new Phaser.GameObjects.Sprite(this.scene,100,100,'noche');
+			this.blour.setDepth(60);
+			this.scene.add.existing(this.blour);
+			this.blour.alpha = 0.90;
+			this.blourActive=true;
+		}
+	}
 }

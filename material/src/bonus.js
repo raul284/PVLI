@@ -1,12 +1,12 @@
 export default class Bonus extends Phaser.GameObjects.Container{
 
-    constructor(scene)
+    constructor(scene,name)
     {
         let x = Math.random() * (scene.bg.width/2);
 		let y = Math.random() * (scene.bg.height/4);
         super(scene,x,y);
-        
-        this.bob= new Phaser.GameObjects.Sprite(scene,0,0,'bob');
+        this.name=name;
+        this.bob= new Phaser.GameObjects.Sprite(scene,0,0,name);
         this.setSize(this.bob.width , this.bob.height);
         this.add(this.bob);
 
@@ -17,8 +17,7 @@ export default class Bonus extends Phaser.GameObjects.Container{
 
         this.body.allowGravity=false;
         
-        this.scene.physics.add.overlap(this.scene.player, this, ()=>{this.scene.player.health(),this.die()});
-		
+        this.scene.physics.add.overlap(this.scene.player, this, ()=>{this.scene.player.powerUp(this.name);this.die()});	
 
     }
     die()

@@ -1,13 +1,14 @@
 export default class Ateroid extends Phaser.GameObjects.Container{
     
-    constructor(scene,x,y,player,dir)
+    constructor(scene,x,y,player,dir,tam)
     {
         super(scene,x,y);
-       this.astorid= new Phaser.GameObjects.Sprite(scene,0,0,'asteroid');
-        this.setSize(this.astorid.width,this.astorid.height);
+        this.astorid= new Phaser.GameObjects.Sprite(scene,0,0,'asteroid');
+        this.setSize(this.astorid.width*tam,this.astorid.height*tam);
         this.add(this.astorid);
-
+ 
         this.astorid.setDepth(10);
+        this.astorid.setScale(tam,tam)
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
@@ -30,7 +31,10 @@ export default class Ateroid extends Phaser.GameObjects.Container{
 		// }); 
         
         this.scene.physics.add.overlap(this.scene.ship, this, ()=>{this.scene.ship.hit(),this.die()});
-		
+		for(let i=0;i<this.scene.enemy.length;i++)
+        {
+            this.scene.physics.add.overlap(this.scene.enemy[i], this, ()=>{this.scene.enemy[i].die(),this.die()});
+        }
     }
    
     preUpdate(t,dt)

@@ -27,6 +27,10 @@ export default class GameScene extends Phaser.Scene {
 		 this.load.image('pixel', 'assets/sprites/pixel1x1.png');
 		 this.load.image('bob', 'assets/sprites/bob.png');
 		 this.load.image('patrik', 'assets/sprites/patrik.png');
+		 this.load.image('duck', 'assets/sprites/duck.png');
+		 this.load.image('eve', 'assets/sprites/eve.png');
+		 this.load.image('raw', 'assets/sprites/Raw.png');
+		 this.load.image('noche', 'assets/sprites/noche.png');
 	}
 	
 	create(){
@@ -89,24 +93,30 @@ export default class GameScene extends Phaser.Scene {
 
 		this.numAster=0;
 		this.astSpeed=50;
+		this.bonus=[];
+		this.enemy=[];
+		
 		//new Fuel(this);
 		// Colision entre player y los tiles
 		this.physics.add.collider(this.player, this.groundLayer);
 		this.physics.add.collider(this.ship, this.groundLayer);
+		
 
-		this.bonus=[];
-		this.time.addEvent({delay:3000, callback: ()=>{this.spawnBonus()},callbackScope:this, loop:true});
+		this.time.addEvent({delay:3000, callback: ()=>{this.spawnBonus(Phaser.Math.Between(0,3))},callbackScope:this, loop:true});
 		
 		this.time.addEvent({delay:5000, callback: ()=>{this.spawnEnemy()},callbackScope:this, loop:true});
 		
 	}
-	spawnBonus(){
-		this.bonus.push(new Bonus(this));
+	spawnBonus(num){
+		if(num==0)this.power='bob';
+		else if(num==1)this.power='duck';
+		else if(num==2) this.power='eve';
+		else if(num==3)this.power='raw';
+		this.bonus.push(new Bonus(this,this.power));
 		
 	}
 	spawnEnemy(){
-		this.bonus.push(new Enemy(this));
-		
+		this.enemy.push(new Enemy(this));		
 	}
 	
 	
