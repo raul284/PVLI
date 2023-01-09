@@ -36,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
 		this.load.image('raw', 'assets/sprites/Raw.png');
 		this.load.image('noche', 'assets/sprites/noche.png');
 		this.load.image('ball', 'assets/sprites/ball.png');
+		this.load.image('paddle', 'assets/sprites/paddle.png');
 		
 		this.load.audio('explosion','assets/sounds/explosion.wav');
 		this.load.audio('endGame','assets/sounds/lose.wav');
@@ -91,25 +92,31 @@ export default class GameScene extends Phaser.Scene {
 
 		const tileset1 = this.map.addTilesetImage('ground_ts', 'ground_ts');
 		this.groundLayer = this.map.createLayer('ground', tileset1);
-
+		
 		// Colisiones
 		this.groundLayer.setCollisionBetween(0,999);
-
+		
 		const width = this.scale.width;
 		const height = this.scale.height;
-
+		
+		
+		this.bLeft = new Bound(this, -1, 0,1,this.bg.displayHeight);
+		this.bRight = new Bound(this, this.bg.displayWidth, 0,1,this.bg.displayHeight);
+		this.bUp = new Bound(this, 0, -1,this.bg.displayWidth,1);
+		this.bDown = new Bound(this, 0, this.bg.displayHeight ,this.bg.displayWidth,1);
+		
 		this.player = new Player(this, width/ 2, 800, this.max);
 		this.p1 = new P1(this,width/ 2+20, 100);
 		this.p2 = new P2(this,width/ 2-50, 100);
 		this.hud=new HUD(this);
+		
+		////BALLS/////
+		this.balls=[];
+		this.numBalls=0;
+		this.balls.push(new Ball(this,200,750,5,1,1));
+		///////////////
 
 		this.ship = new Ship(this,65,160,this.max);
-
-		this.bLeft = new Bound(this, -1, 0,1,this.bg.displayHeight);
-		 this.bRight = new Bound(this, this.bg.displayWidth, 0,1,this.bg.displayHeight);
-		 this.bUp = new Bound(this, 0, -1,this.bg.displayWidth,1);
-		 this.bDown = new Bound(this, 0, this.bg.displayHeight ,this.bg.displayWidth,1);
-
         // colisiones con los bordes
 		this.physics.add.collider(this.player, this.bg);
 		this.physics.add.collider(this.player, this.bLeft);
@@ -173,10 +180,6 @@ export default class GameScene extends Phaser.Scene {
 		//player activo
 		this.pactivo=true;
 
-		////BALLS/////
-		this.balls=[];
-		this.numBalls=0;
-		this.balls.push(new Ball(this,200,750,5,1));
 	}
 
 	update(t,dt)

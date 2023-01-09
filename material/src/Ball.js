@@ -1,6 +1,6 @@
 export default class Ball extends Phaser.GameObjects.Container{
 
-    constructor(scene,x,y,tam,num)
+    constructor(scene,x,y,tam,num,dir)
     {
        
         super(scene,x,y);
@@ -14,7 +14,7 @@ export default class Ball extends Phaser.GameObjects.Container{
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
-        this.dirY=1;
+        this.dirY=dir;
         this.dirX=1;
         if(Phaser.Math.Between(0,1)%2==0)
         {
@@ -23,6 +23,8 @@ export default class Ball extends Phaser.GameObjects.Container{
 
        // this.body.allowGravity=false;
        this.scene.physics.add.overlap(this.scene.bDown, this, ()=>{this.dirY=-1});
+       this.scene.physics.add.overlap(this.scene.player.gancho, this, ()=>{if(this.scene.player.gancho.throw)this.scene.player.gancho.reset(),this.die()});
+       this.scene.physics.add.overlap(this.scene.player, this, ()=>{this.scene.player.hit(),this.die()});
        this.scene.physics.add.collider(this, this.scene.bDown);
        this.scene.physics.add.collider(this, this.scene.player);
        this.body.onCollide = true;
@@ -45,8 +47,8 @@ export default class Ball extends Phaser.GameObjects.Container{
        console.log(this.scene.balls)
         if(this.number<4)
         {
-        this.scene.balls.push(new Ball(this.scene,this.x-10,this.y,this.tamaño/2,this.number+1));
-        this.scene.balls.push(new Ball(this.scene,this.x+10,this.y,this.tamaño/2,this.number+1));
+        this.scene.balls.push(new Ball(this.scene,this.x-10,this.y,this.tamaño/2,this.number+1,this.dirY));
+        this.scene.balls.push(new Ball(this.scene,this.x+10,this.y,this.tamaño/2,this.number+1,this.dirY));
         
         }
         this.scene.numBalls--;

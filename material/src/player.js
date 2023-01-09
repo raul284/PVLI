@@ -1,4 +1,68 @@
 import Ateroid from "./asteroids.js";
+export class Gancho extends Phaser.GameObjects.Container{
+constructor(scene,x,y){
+	super(scene,x,y);
+	this.sprite= new Phaser.GameObjects.Sprite(scene,0,0,'paddle');
+		this.setSize(this.sprite.width/4, this.sprite.height/4);
+		this.add(this.sprite);
+		this.sprite.setScale(0.25)
+
+		this.sprite.setDepth(10);
+		this.speed=100;
+		this.scene.add.existing(this);
+		this.scene.physics.add.existing(this);
+
+		this.scene.physics.add.collider(this, this.scene.bg);
+		this.scene.physics.add.collider(this, this.scene.bLeft);
+		this.scene.physics.add.collider(this, this.scene.bDown);
+		this.scene.physics.add.collider(this, this.scene.bRight);
+		this.scene.physics.add.collider(this, this.scene.bUp);
+		this.body.onCollide = true;
+		this.body.allowGravity=false;
+
+		this.throw=false;
+		this.timer=0;
+		this.sprite.setVisible(false);
+		
+		// this.scene.time.addEvent({delay:this.timer, callback: ()=>{if(this.throw)this.throw=false;},callbackScope:this, loop:true});
+
+}
+
+preUpdate(t,dt){
+	this.sprite.preUpdate(t,dt);
+	
+	if(!this.throw){
+		
+		this.x=this.scene.player.x;
+		this.y=this.scene.player.y;
+	}
+	else{
+		if(this.y>750)this.body.setVelocityY(-this.speed);
+		else if(this.timer<3000)
+		{
+			this.body.setVelocityY(0);
+			this.timer += dt;
+		}
+		else{
+			this.throw=false;
+			this.sprite.setVisible(false);
+			this.timer=0;
+		}		
+	}	
+}
+reset(){
+	
+	this.x=this.scene.player.x;
+	this.y=this.scene.player.y;
+	this.body.setVelocityY(0);
+	this.timer=0;
+	this.throw=false;
+	this.sprite.setVisible(false);
+
+}
+
+
+}
 export default class Player extends Phaser.GameObjects.Container{
 
 	constructor(scene,x,y,num){
@@ -6,6 +70,7 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.sprite= new Phaser.GameObjects.Sprite(scene,0,0,'player');
 		this.setSize(this.sprite.width, this.sprite.height);
 		this.add(this.sprite);
+		
 
 		this.sprite.setDepth(10);
 		this.speed=100;
@@ -42,13 +107,16 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.cursorSpace= this.scene.input.keyboard.addKey('SPACE');
 		this.cursorR= this.scene.input.keyboard.addKey('R');
 		this.cursorH= this.scene.input.keyboard.addKey('H');
-		this.cursorP= this.scene.input.keyboard.addKey('P');
+		this.cursorF= this.scene.input.keyboard.addKey('F');
 		this.cursorM= this.scene.input.keyboard.addKey('M');
 
 		//Raton
 		this.pointer=this.scene.input.activePointer
 
 		this.shot=true;
+
+		////GANCHO
+		this.gancho =new Gancho(scene,this.x,this.y);
 	
 	}
 
@@ -72,8 +140,8 @@ export default class Player extends Phaser.GameObjects.Container{
 		{
 			this.body.setVelocityY(-this.speed);
 		}
-	
-	    if ((this.pointer.isDown||Phaser.Input.Keyboard.JustDown(this.cursorP)) && this.bullet>0 &&!this.shot)
+		// Phaser.Input.Keyboard.JustDown(this.cursorP)
+	    if ((this.pointer.isDown) && this.bullet>0 &&!this.shot)
 	    {	
 			this.shot=true;
 			new Ateroid(this.scene,this.x,this.y,this,this.dir,this.tam);
@@ -91,6 +159,12 @@ export default class Player extends Phaser.GameObjects.Container{
 		if(Phaser.Input.Keyboard.JustDown(this.cursorM))
 		{
 			this.scene.changeMode(1);
+		}
+		if(Phaser.Input.Keyboard.JustDown(this.cursorF))
+		{
+			this.gancho.reset();
+			this.gancho.sprite.setVisible(true);
+			this.gancho.throw=true;
 		}
 		
 		// if(this.cursorL.isDown || this.currentLife==0)
