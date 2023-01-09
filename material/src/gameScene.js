@@ -5,6 +5,7 @@ import Bonus from './bonus.js';
 import Enemy from './enemy.js';
 import {P1,P2} from './NPC.js';
 import HUD from './HUD.js';
+import Ball from './Ball.js';
 
 export default class GameScene extends Phaser.Scene {
 
@@ -34,6 +35,7 @@ export default class GameScene extends Phaser.Scene {
 		this.load.image('eve', 'assets/sprites/eve.png');
 		this.load.image('raw', 'assets/sprites/Raw.png');
 		this.load.image('noche', 'assets/sprites/noche.png');
+		this.load.image('ball', 'assets/sprites/ball.png');
 		
 		this.load.audio('explosion','assets/sounds/explosion.wav');
 		this.load.audio('endGame','assets/sounds/lose.wav');
@@ -167,7 +169,12 @@ export default class GameScene extends Phaser.Scene {
 		}
 		console.log(this.OPos)
 		
+		//player activo
 		this.pactivo=true;
+
+		////BALLS/////
+		this.balls=[];
+		this.balls.push(new Ball(this,300,150,5,1));
 	}
 
 	update(t,dt)
