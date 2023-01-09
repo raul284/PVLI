@@ -17,7 +17,7 @@ window.onload = ()=>{
             default: 'arcade',
 			arcade: {
 				gravity: {y: 150}, 
-				debug: false
+				debug: true
 			}
         },
         pixelArt: true,

@@ -98,38 +98,38 @@ export default class GameScene extends Phaser.Scene {
 		const width = this.scale.width;
 		const height = this.scale.height;
 
-		this.player = new Player(this, width/ 2, 100, this.max);
-		this.p1 = new P1(this,width/ 2-50, 100);
-		this.p2 = new P2(this,width/ 2+20, 100);
+		this.player = new Player(this, width/ 2, 800, this.max);
+		this.p1 = new P1(this,width/ 2+20, 100);
+		this.p2 = new P2(this,width/ 2-50, 100);
 		this.hud=new HUD(this);
 
 		this.ship = new Ship(this,65,160,this.max);
 
-		let bLeft = new Bound(this, -1, 0,1,this.bg.displayHeight);
-		let bRight = new Bound(this, this.bg.displayWidth, 0,1,this.bg.displayHeight);
-		let bUp = new Bound(this, 0, -1,this.bg.displayWidth,1);
-		let bDown = new Bound(this, 0, this.bg.displayHeight ,this.bg.displayWidth,1);
+		this.bLeft = new Bound(this, -1, 0,1,this.bg.displayHeight);
+		 this.bRight = new Bound(this, this.bg.displayWidth, 0,1,this.bg.displayHeight);
+		 this.bUp = new Bound(this, 0, -1,this.bg.displayWidth,1);
+		 this.bDown = new Bound(this, 0, this.bg.displayHeight ,this.bg.displayWidth,1);
 
         // colisiones con los bordes
 		this.physics.add.collider(this.player, this.bg);
-		this.physics.add.collider(this.player, bLeft);
-		this.physics.add.collider(this.player, bDown);
-		this.physics.add.collider(this.player, bRight);
-		this.physics.add.collider(this.player, bUp);
+		this.physics.add.collider(this.player, this.bLeft);
+		this.physics.add.collider(this.player, this.bDown);
+		this.physics.add.collider(this.player, this.bRight);
+		this.physics.add.collider(this.player, this.bUp);
 		this.player.body.onCollide = true;
 		///////
 		this.physics.add.collider(this.p1, this.bg);
-		this.physics.add.collider(this.p1, bLeft);
-		this.physics.add.collider(this.p1, bDown);
-		this.physics.add.collider(this.p1, bRight);
-		this.physics.add.collider(this.p1, bUp);
+		this.physics.add.collider(this.p1, this.bLeft);
+		this.physics.add.collider(this.p1, this.bDown);
+		this.physics.add.collider(this.p1, this.bRight);
+		this.physics.add.collider(this.p1, this.bUp);
 		this.p1.body.onCollide = true;
 
 		this.physics.add.collider(this.p2, this.bg);
-		this.physics.add.collider(this.p2, bLeft);
-		this.physics.add.collider(this.p2, bDown);
-		this.physics.add.collider(this.p2, bRight);
-		this.physics.add.collider(this.p2, bUp);
+		this.physics.add.collider(this.p2, this.bLeft);
+		this.physics.add.collider(this.p2, this.bDown);
+		this.physics.add.collider(this.p2, this.bRight);
+		this.physics.add.collider(this.p2, this.bUp);
 		this.p2.body.onCollide = true;
 		//CAMRA FOLLOW
 		this.camaraMapa.startFollow(this.player);
@@ -151,7 +151,7 @@ export default class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.p1, this.p2);
 
 		this.modo1=false;
-		this.second=60;
+		this.second=3600;
 		this.pause=false;
 		this.time.addEvent({delay:3000, callback: ()=>{if(this.modo1)this.spawnBonus(Phaser.Math.Between(0,3))},callbackScope:this, loop:true});
 
@@ -175,7 +175,8 @@ export default class GameScene extends Phaser.Scene {
 
 		////BALLS/////
 		this.balls=[];
-		this.balls.push(new Ball(this,300,150,5,1));
+		this.numBalls=0;
+		this.balls.push(new Ball(this,200,750,5,1));
 	}
 
 	update(t,dt)
@@ -199,9 +200,13 @@ export default class GameScene extends Phaser.Scene {
 			this.op++;
 			if(this.op>=this.back.length)this.op=0;
 		}
-		if(this.second<0)
+		if(this.second<0  )
 		{			
 			this.scene.start('gameOver');
+		}
+		if(this.numBalls<=0)
+		{
+			this.scene.start('win');
 		}
 		if(Phaser.Input.Keyboard.JustDown(this.cursorT))
 		{
@@ -212,11 +217,27 @@ export default class GameScene extends Phaser.Scene {
 				this.player.body.setVelocityX(0);
 				this.player.body.setVelocityY(0);
 				this.player.body.allowGravity=false
+				for(let i=0;i<this.balls.length;i++)
+				{
+					if(this.balls[i].scene!=undefined){
+					this.balls[i].setActive(false);
+					this.balls[i].body.setVelocityX(0);
+					this.balls[i].body.setVelocityY(0);
+					}
+				}
 			}
 			else{
 				if(this.pactivo)this.player.setActive(true);
 				this.player.body.allowGravity=true
+				for(let i=0;i<this.balls.length;i++)
+				{
+					if(this.balls[i].scene!=undefined){
+					this.balls[i].setActive(true);
+					}
+				}
 			}
+			
+			
 		}
 	
 	}
@@ -227,7 +248,7 @@ export default class GameScene extends Phaser.Scene {
 		this.modo1=!this.modo1;
 		console.log(this.modo1);
 		}
-		else if(index==2){
+		else if(index==2 && !this.pause){
 			this.player.setActive(!this.pactivo);
 			this.pactivo=!this.pactivo;
 			if(!this.pactivo)this.cameras.main.startFollow(this.p1);

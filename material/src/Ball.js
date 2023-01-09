@@ -14,23 +14,50 @@ export default class Ball extends Phaser.GameObjects.Container{
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
+        this.dirY=1;
+        this.dirX=1;
+        if(Phaser.Math.Between(0,1)%2==0)
+        {
+            this.dirX=-1;
+        }
 
-        this.body.allowGravity=false;
-        
-        this.scene.physics.add.overlap(this.scene.player, this, ()=>{this.die()});
-		
-
+       // this.body.allowGravity=false;
+       this.scene.physics.add.overlap(this.scene.bDown, this, ()=>{this.dirY=-1});
+       this.scene.physics.add.collider(this, this.scene.bDown);
+       this.scene.physics.add.collider(this, this.scene.player);
+       this.body.onCollide = true;
+       
+       
+       this.scene.numBalls++;
+       console.log( this.scene.numBallsa)
+    }
+    preUpdate(t,dt)
+    {
+        this.enemy.preUpdate(t,dt);
+        this.movement(this.dirY);
+        if(this.y<700)this.dirY=1;
+        if(this.x>240)this.dirX=-1;
+        if(this.x<10)this.dirX=1;
+       
     }
     die()
     {
-        console.log("oi");
+       console.log(this.scene.balls)
         if(this.number<4)
         {
-        this.scene.balls.push(new Ball(this.scene,this.x-50,this.y,this.tamaño/2,this.number+1));
-        this.scene.balls.push(new Ball(this.scene,this.x+50,this.y,this.tamaño/2,this.number+1));
+        this.scene.balls.push(new Ball(this.scene,this.x-10,this.y,this.tamaño/2,this.number+1));
+        this.scene.balls.push(new Ball(this.scene,this.x+10,this.y,this.tamaño/2,this.number+1));
         
         }
+        this.scene.numBalls--;
         this.destroy();
+    }
+    movement(index)
+    {
+        this.body.allowGravity=false;
+       
+        this.body.setVelocityY(index*50);
+        this.body.setVelocityX(this.dirX*50);
     }
 
 }

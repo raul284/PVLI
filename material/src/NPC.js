@@ -34,6 +34,7 @@ constructor(scene,x,y){
     });
     this.sprite.play('idlenpc');
     this.cursorQ= this.scene.input.keyboard.addKey('Q');
+    
 }
 
     move(index)
@@ -62,6 +63,17 @@ constructor(scene,x,y){
         }
         this.body.setVelocityY(-this.speed);
     }
+    rebote(x1,x2)
+    {
+        //console.log(this.x+"-----"+this.scene.p1.x)
+        if(x1>x2){
+            this.x+=5;            
+        }
+        else{
+            this.x-=5;            
+        }
+    }
+   
 }
 
 
@@ -70,24 +82,22 @@ export class P1 extends NPC{
         super(scene,x,y); 
         this.cursorA= this.scene.input.keyboard.addKey('Left');
 		this.cursorD= this.scene.input.keyboard.addKey('Right');
-		// this.cursorSpace= this.scene.input.keyboard.addKey('SPACE');
 		 this.cursorW= this.scene.input.keyboard.addKey('up');
-		// this.cursorH= this.scene.input.keyboard.addKey('H');
-		// this.cursorP= this.scene.input.keyboard.addKey('P');
-		// this.cursorM= this.scene.input.keyboard.addKey('M'); 
-       
+         this.dir=true;
     }
     preUpdate(t,dt){
 		this.sprite.preUpdate(t,dt);
 		if(this.cursorA.isDown)
 		{
-            this.sprite.setFlip(true,false);
+            // this.sprite.setFlip(true,false);
+            this.dir=true;
 			this.move(-1);			
 		}
 		else if(this.cursorD.isDown)
 		{
-            this.sprite.setFlip(false,false);
-			this.move(1);
+            // this.sprite.setFlip(false,false);
+			this.dir=false;
+            this.move(1);
 		}
 		else {
             this.move(0);
@@ -100,6 +110,7 @@ export class P1 extends NPC{
         {
             this.scene.changeMode(2);
         }
+        this.sprite.setFlip(this.dir,false);
     }
 }
 export class P2 extends NPC{
@@ -112,8 +123,10 @@ export class P2 extends NPC{
 		// this.cursorH= this.scene.input.keyboard.addKey('H');
 		// 
 		// this.cursorM= this.scene.input.keyboard.addKey('M'); 
-        this.sprite.setFlip(true,false);
-        this.scene.physics.add.overlap(this.scene.p1, this, ()=>{console.log("au")});
+        this.dir=false;
+        // this.sprite.setFlip(true,false);
+        this.scene.physics.add.overlap(this.scene.p1, this, ()=>{this.rebote(this.x,this.scene.p1.x)
+        this.scene.p1.rebote(this.scene.p1.x,this.x)});
 		
         
     }
@@ -121,12 +134,14 @@ export class P2 extends NPC{
 		this.sprite.preUpdate(t,dt);
 		if(this.cursorJ.isDown)
 		{
-            this.sprite.setFlip(true,false);
+           // this.sprite.setFlip(true,false);
+           this.dir=true;
 			this.move(-1);
         }
 		else if(this.cursorL.isDown)
 		{
-            this.sprite.setFlip(false,false);
+           // this.sprite.setFlip(false,false);
+           this.dir=false;
 			this.move(1);
 		}
         else if(this.cursorI.isDown)
@@ -136,7 +151,9 @@ export class P2 extends NPC{
 		else {
             this.move(0);
         }
+        this.sprite.setFlip(this.dir,false);
     }
+   
     
 
 
