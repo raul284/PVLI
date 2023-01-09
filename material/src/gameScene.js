@@ -58,7 +58,8 @@ export default class GameScene extends Phaser.Scene {
 			
 			//PARALAX
 		this.back=[];
-		this.back.push(this.add.image(20, 800, 'sky').setScrollFactor(1).setDepth(-1).setScale(10,1));
+		this.back.push(this.add.image(20, 800, 'sky').setScrollFactor(1).setDepth(-1)
+		.setScale(10,1));
 		this.createAligned(2,'cloudsBG', 0.2);
 		this.createAligned(2,'montain', 0.4);
 		this.createAligned(4,'clouds3', 0.6);
@@ -167,7 +168,7 @@ export default class GameScene extends Phaser.Scene {
 		this.time.addEvent({delay:1000, callback: ()=>{if(!this.pause)this.second--},callbackScope:this, loop:true});
 
 		this.x=0;
-		this.pos=0;
+		this.pos=-1;
 		this.op=0;
 
 		this.OPos=[];
@@ -185,7 +186,7 @@ export default class GameScene extends Phaser.Scene {
 	update(t,dt)
 	{
 		
-		if(this.player.cursorR.isDown || this.pos!=0){
+		if(this.player.cursorR.isDown || this.pos>0){
 			this.moveBack(this.back[this.x],this.pos);		
 			this.x++;
 			this.pos+=0.2;
