@@ -1,6 +1,7 @@
 import MenuScene from "./menu.js";
 import GameScene from "./gameScene.js";
 import LoseScene from "./lose.js";
+import WinScene from "./win.js";
 
 window.onload = ()=>{
 
@@ -20,7 +21,7 @@ window.onload = ()=>{
 			}
         },
         pixelArt: true,
-        scene: [ MenuScene,GameScene,LoseScene]
+        scene: [ MenuScene,GameScene,LoseScene,WinScene]
     };
 
     new Phaser.Game(config);

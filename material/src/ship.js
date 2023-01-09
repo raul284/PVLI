@@ -22,7 +22,7 @@ export default class Ship extends Phaser.GameObjects.Container{
         this.vida.text='Vida\n '+this.currentHealth+'/'+this.MaxHealth;
         if(this.currentHealth==0)
         {
-            this.scene.scene.start('gameOver')
+            this.scene.scene.start('win')
         };
     }
     

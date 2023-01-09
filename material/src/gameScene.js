@@ -39,6 +39,7 @@ export default class GameScene extends Phaser.Scene {
 		
 		this.load.audio('explosion','assets/sounds/explosion.wav');
 		this.load.audio('endGame','assets/sounds/lose.wav');
+		this.load.audio('winGame','assets/sounds/win.wav');
 		
 		
 		 //PARALLAX
