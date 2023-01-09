@@ -3,13 +3,16 @@ import Bound from './bound.js';
 import Ship from './ship.js';
 import Bonus from './bonus.js';
 import Enemy from './enemy.js';
+import {P1,P2} from './NPC.js';
+import HUD from './HUD.js';
 
 export default class GameScene extends Phaser.Scene {
 
 	constructor (){
 		super({key: 'GameScene'});
+		
 	}
-
+	
 	init(obj){
 		this.max = obj.max;
 	}
@@ -18,24 +21,24 @@ export default class GameScene extends Phaser.Scene {
 		this.load.image('ground_ts', 'assets/sprites/tileset.png');
 		this.load.image('spaceship', 'assets/sprites/spaceship.png');
 		this.load.spritesheet('player', 'assets/sprites/jetpac.png',
-		 {frameWidth: 17, frameHeight: 24});
+		{frameWidth: 17, frameHeight: 24});
 		this.load.image('fuel', 'assets/sprites/fuel.png');
 		this.load.spritesheet('asteroid','assets/sprites/meteor.png',
-		 {frameWidth: 16, frameHeight: 14});
-
-		 this.load.image('bg', 'assets/sprites/plazaNoche.png');
-		 this.load.image('pixel', 'assets/sprites/pixel1x1.png');
-		 this.load.image('bob', 'assets/sprites/bob.png');
-		 this.load.image('patrik', 'assets/sprites/patrik.png');
-		 this.load.image('duck', 'assets/sprites/duck.png');
-		 this.load.image('eve', 'assets/sprites/eve.png');
-		 this.load.image('raw', 'assets/sprites/Raw.png');
-		 this.load.image('noche', 'assets/sprites/noche.png');
-
-		 this.load.audio('explosion','assets/sounds/explosion.wav');
-		 this.load.audio('endGame','assets/sounds/lose.wav');
-
-
+		{frameWidth: 16, frameHeight: 14});
+		
+		this.load.image('bg', 'assets/sprites/plazaNoche.png');
+		this.load.image('pixel', 'assets/sprites/pixel1x1.png');
+		this.load.image('bob', 'assets/sprites/bob.png');
+		this.load.image('patrik', 'assets/sprites/patrik.png');
+		this.load.image('duck', 'assets/sprites/duck.png');
+		this.load.image('eve', 'assets/sprites/eve.png');
+		this.load.image('raw', 'assets/sprites/Raw.png');
+		this.load.image('noche', 'assets/sprites/noche.png');
+		
+		this.load.audio('explosion','assets/sounds/explosion.wav');
+		this.load.audio('endGame','assets/sounds/lose.wav');
+		
+		
 		 //PARALLAX
 		 this.load.image('sky', 'assets/sprites/sky.png');
 		 this.load.image('cloudsBG', 'assets/sprites/clouds_bg.png');
@@ -43,11 +46,12 @@ export default class GameScene extends Phaser.Scene {
 		 this.load.image('clouds3', 'assets/sprites/clouds_mg_3.png');
 		 this.load.image('clouds2', 'assets/sprites/clouds_mg_2.png');
 		 this.load.image('clouds1', 'assets/sprites/clouds_mg_1.png');
-
+		 
 		}
-
+		
 		create(){
-
+			this.cursorT= this.input.keyboard.addKey('T');
+			
 			//PARALAX
 		this.back=[];
 		this.back.push(this.add.image(20, 800, 'sky').setScrollFactor(1).setDepth(-1).setScale(10,1));
@@ -65,7 +69,7 @@ export default class GameScene extends Phaser.Scene {
 		this.camaraMapa= this.cameras.add(25,7,45,45);
 		this.camaraMapa.zoom=0.15;
 		this.camaraMapa.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
-
+		
 		console.log(this.camaraMapa.y)
 
 		//MAPA
@@ -92,6 +96,9 @@ export default class GameScene extends Phaser.Scene {
 		const height = this.scale.height;
 
 		this.player = new Player(this, width/ 2, 100, this.max);
+		this.p1 = new P1(this,width/ 2-50, 100);
+		this.p2 = new P2(this,width/ 2+20, 100);
+		this.hud=new HUD(this);
 
 		this.ship = new Ship(this,65,160,this.max);
 
@@ -107,6 +114,20 @@ export default class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.player, bRight);
 		this.physics.add.collider(this.player, bUp);
 		this.player.body.onCollide = true;
+		///////
+		this.physics.add.collider(this.p1, this.bg);
+		this.physics.add.collider(this.p1, bLeft);
+		this.physics.add.collider(this.p1, bDown);
+		this.physics.add.collider(this.p1, bRight);
+		this.physics.add.collider(this.p1, bUp);
+		this.p1.body.onCollide = true;
+
+		this.physics.add.collider(this.p2, this.bg);
+		this.physics.add.collider(this.p2, bLeft);
+		this.physics.add.collider(this.p2, bDown);
+		this.physics.add.collider(this.p2, bRight);
+		this.physics.add.collider(this.p2, bUp);
+		this.p2.body.onCollide = true;
 		//CAMRA FOLLOW
 		this.camaraMapa.startFollow(this.player);
 		this.cameras.main.startFollow(this.player);
@@ -121,11 +142,20 @@ export default class GameScene extends Phaser.Scene {
 		// Colision entre player y los tiles
 		this.physics.add.collider(this.player, this.groundLayer);
 		this.physics.add.collider(this.ship, this.groundLayer);
+		//////////
+		this.physics.add.collider(this.p1, this.groundLayer);
+		this.physics.add.collider(this.p2, this.groundLayer);
+		this.physics.add.collider(this.p1, this.p2);
 
+		this.modo1=false;
+		this.second=60;
+		this.pause=false;
+		this.time.addEvent({delay:3000, callback: ()=>{if(this.modo1)this.spawnBonus(Phaser.Math.Between(0,3))},callbackScope:this, loop:true});
 
-		this.time.addEvent({delay:3000, callback: ()=>{this.spawnBonus(Phaser.Math.Between(0,3))},callbackScope:this, loop:true});
+		this.time.addEvent({delay:5000, callback: ()=>{if(this.modo1)this.spawnEnemy()},callbackScope:this, loop:true});
+		
+		this.time.addEvent({delay:1000, callback: ()=>{if(!this.pause)this.second--},callbackScope:this, loop:true});
 
-		this.time.addEvent({delay:5000, callback: ()=>{this.spawnEnemy()},callbackScope:this, loop:true});
 		this.x=0;
 		this.pos=0;
 		this.op=0;
@@ -136,30 +166,65 @@ export default class GameScene extends Phaser.Scene {
 			this.OPos.push(this.back[k].x);
 		}
 		console.log(this.OPos)
+		
+		this.pactivo=true;
 	}
 
 	update(t,dt)
 	{
-		if(this.player.cursorL.isDown || this.pos!=0){
-		this.moveBack(this.back[this.x],this.pos);		
-		this.x++;
-		this.pos+=0.2;
-		if(this.x>=this.back.length)this.x=0;
-		if(this.pos>this.game.config.width/2){
-			this.pos=0;
-			
-			
-		}
+		
+		if(this.player.cursorR.isDown || this.pos!=0){
+			this.moveBack(this.back[this.x],this.pos);		
+			this.x++;
+			this.pos+=0.2;
+			if(this.x>=this.back.length)this.x=0;
+			if(this.pos>this.game.config.width/2){
+				this.pos=0;			
+			}
 
+		}
 		if(this.player.cursorH.isDown || this.pos==0)
 		{
 			this.pos=0;
-			console.log(this.OPos[1])
-				this.moveBack(this.back[this.op],this.OPos[this.op]);
-				this.op++;
-				if(this.op>=this.back.length)this.op=0;
+		
+			this.moveBack(this.back[this.op],this.OPos[this.op]);
+			this.op++;
+			if(this.op>=this.back.length)this.op=0;
 		}
+		if(this.second<0)
+		{			
+			this.scene.start('gameOver');
+		}
+		if(Phaser.Input.Keyboard.JustDown(this.cursorT))
+		{
+			this.pause=!this.pause;
+			if(this.pause)
+			{
+				this.player.setActive(false);
+				this.player.body.setVelocityX(0);
+				this.player.body.setVelocityY(0);
+				this.player.body.allowGravity=false
+			}
+			else{
+				if(this.pactivo)this.player.setActive(true);
+				this.player.body.allowGravity=true
+			}
+		}
+	
 	}
+	
+	changeMode(index)
+	{
+		if(index==1){
+		this.modo1=!this.modo1;
+		console.log(this.modo1);
+		}
+		else if(index==2){
+			this.player.setActive(!this.pactivo);
+			this.pactivo=!this.pactivo;
+			if(!this.pactivo)this.cameras.main.startFollow(this.p1);
+			else this.cameras.main.startFollow(this.player);
+		}
 	}
 	spawnBonus(num){
 		if(num==0)this.power='bob';
@@ -172,6 +237,8 @@ export default class GameScene extends Phaser.Scene {
 	spawnEnemy(){
 		this.enemy.push(new Enemy(this));
 	}
+
+
 	//PARALAX
 	createAligned(count, imageKey, srollFactor){
 		let x = 0;

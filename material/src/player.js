@@ -15,15 +15,15 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.bullet=this.maxBullet;
 		this.dir=1;
 		this.blourActive=false;
-		this.bullets=this.scene.add.text(225,150,'BULLET \n    '+this.bullet+'/'+this.maxBullet
-		, {fontFamily: 'Pixeled', fontSize: 10, color: '#AAAAAA'})
-		.setOrigin(0.5,0.5).setScrollFactor(0);
+		// this.bullets=this.scene.add.text(225,150,'BULLET \n    '+this.bullet+'/'+this.maxBullet
+		// , {fontFamily: 'Pixeled', fontSize: 10, color: '#AAAAAA'})
+		// .setOrigin(0.5,0.5).setScrollFactor(0);
 
 		this.maxLife=num;
 		this.currentLife=this.maxLife;
-		this.lifes=this.scene.add.text(225,25,'LIFES \n   '+this.currentLife+'/'+this.maxLife
-		, {fontFamily: 'Pixeled', fontSize: 10, color: '#F00000'})
-		.setOrigin(0.5,0.5).setScrollFactor(0);
+		// this.lifes=this.scene.add.text(225,25,'LIFES \n   '+this.currentLife+'/'+this.maxLife
+		// , {fontFamily: 'Pixeled', fontSize: 10, color: '#F00000'})
+		// .setOrigin(0.5,0.5).setScrollFactor(0);
 		
 		this.scene.add.existing(this);
 		this.scene.physics.add.existing(this);
@@ -40,9 +40,11 @@ export default class Player extends Phaser.GameObjects.Container{
 		this.cursorA= this.scene.input.keyboard.addKey('A');
 		this.cursorD= this.scene.input.keyboard.addKey('D');
 		this.cursorSpace= this.scene.input.keyboard.addKey('SPACE');
-		this.cursorL= this.scene.input.keyboard.addKey('L');
+		this.cursorR= this.scene.input.keyboard.addKey('R');
 		this.cursorH= this.scene.input.keyboard.addKey('H');
 		this.cursorP= this.scene.input.keyboard.addKey('P');
+		this.cursorM= this.scene.input.keyboard.addKey('M');
+
 		//Raton
 		this.pointer=this.scene.input.activePointer
 
@@ -76,7 +78,7 @@ export default class Player extends Phaser.GameObjects.Container{
 			this.shot=true;
 			new Ateroid(this.scene,this.x,this.y,this,this.dir,this.tam);
 			this.bullet--;
-			this.bullets.text='BULLET \n    '+this.bullet+'/'+this.maxBullet;
+			//this.bullets.text='BULLET \n    '+this.bullet+'/'+this.maxBullet;
 			
 		}
 		if (!this.pointer.isDown)this.shot=false;
@@ -86,6 +88,11 @@ export default class Player extends Phaser.GameObjects.Container{
 			this.scene.time.addEvent({delay:7000, callback: ()=>{
 			this.blour.destroy();this.blourActive=false},callbackScope:this, loop:false});
 		}
+		if(Phaser.Input.Keyboard.JustDown(this.cursorM))
+		{
+			this.scene.changeMode(1);
+		}
+		
 		// if(this.cursorL.isDown || this.currentLife==0)
 		// {
 		// 	this.scene.scene.start('gameOver');
@@ -100,13 +107,13 @@ export default class Player extends Phaser.GameObjects.Container{
 	health()
 	{
 		if(this.currentLife<this.maxLife)this.currentLife++;
-		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;	 		
+		//this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;	 		
 	}
 	hit()
 	{
 		this.currentLife--;
 		if(this.currentLife==0)this.scene.scene.start('gameOver');
-		this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
+		//this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
 
 		this.speed=100;
 		this.tam=1;

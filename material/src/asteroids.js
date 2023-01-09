@@ -57,7 +57,7 @@ export default class Ateroid extends Phaser.GameObjects.Container{
         //SONIDO
         this.bum.play();
         this.player.bullet++;
-        this.player.bullets.text='BULLET \n    '+ this.player.bullet+'/'+ this.player.maxBullet;
+        //this.player.bullets.text='BULLET \n    '+ this.player.bullet+'/'+ this.player.maxBullet;
         this.destroy();
     }
 }
