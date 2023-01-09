@@ -2,6 +2,7 @@ import MenuScene from "./menu.js";
 import GameScene from "./gameScene.js";
 import LoseScene from "./lose.js";
 import WinScene from "./win.js";
+import HUD from "./HUD.js";
 
 window.onload = ()=>{
 
@@ -17,11 +18,11 @@ window.onload = ()=>{
             default: 'arcade',
 			arcade: {
 				gravity: {y: 150}, 
-				debug: true
+				debug: false
 			}
         },
         pixelArt: true,
-        scene: [ MenuScene,GameScene,LoseScene,WinScene]
+        scene: [ MenuScene, GameScene,HUD,LoseScene,WinScene]
     };
 
     new Phaser.Game(config);

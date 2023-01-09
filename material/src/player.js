@@ -186,8 +186,11 @@ export default class Player extends Phaser.GameObjects.Container{
 	hit()
 	{
 		this.currentLife--;
-		if(this.currentLife==0)this.scene.scene.start('gameOver');
-		//this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
+		if(this.currentLife==0){
+			this.scene.scene.stop('hud');
+			this.scene.scene.start('gameOver');
+		
+		}	//this.lifes.text= 'LIFES \n   '+this.currentLife+'/'+this.maxLife;
 
 		this.speed=100;
 		this.tam=1;

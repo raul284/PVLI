@@ -71,8 +71,8 @@ export default class GameScene extends Phaser.Scene {
 		//CAMARA
 		this.cameras.main.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
 		//MINI_MAPA
-		this.camaraMapa= this.cameras.add(25,7,45,45);
-		this.camaraMapa.zoom=0.15;
+		this.camaraMapa= this.cameras.add(10,7,60,40);
+		this.camaraMapa.zoom=0.25;
 		this.camaraMapa.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
 		
 		console.log(this.camaraMapa.y)
@@ -109,7 +109,9 @@ export default class GameScene extends Phaser.Scene {
 		this.player = new Player(this, width/ 2, 800, this.max);
 		this.p1 = new P1(this,width/ 2+20, 100);
 		this.p2 = new P2(this,width/ 2-50, 100);
-		this.hud=new HUD(this);
+		//this.hud=new HUD(this);
+		this.scene.get('hud').up(this);
+		this.scene.launch('hud');
 		
 		////BALLS/////
 		this.balls=[];
@@ -159,7 +161,7 @@ export default class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.p1, this.p2);
 
 		this.modo1=false;
-		this.second=3600;
+		this.second=60;
 		this.pause=false;
 		this.time.addEvent({delay:3000, callback: ()=>{if(this.modo1)this.spawnBonus(Phaser.Math.Between(0,3))},callbackScope:this, loop:true});
 
@@ -206,10 +208,12 @@ export default class GameScene extends Phaser.Scene {
 		}
 		if(this.second<0  )
 		{			
+			this.scene.stop('hud');
 			this.scene.start('gameOver');
 		}
 		if(this.numBalls<=0)
 		{
+			this.scene.stop('hud');
 			this.scene.start('win');
 		}
 		if(Phaser.Input.Keyboard.JustDown(this.cursorT))
